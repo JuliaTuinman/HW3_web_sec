@@ -1,4 +1,4 @@
-# babyproto1 — Prototype Pollution
+# babyproto1
 
 ## The vulnerability
 
