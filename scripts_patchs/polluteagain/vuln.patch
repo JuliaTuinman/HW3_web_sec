@@ -1,0 +1,19 @@
+--- a/app.py
++++ b/app.py
+@@ -84,11 +84,12 @@
+ AQMAP = AQMap()
+ 
+ def deep_merge(src, dst):
+-  # Naive "defense": refuse the textbook class-traversal keys, so the standard
+-  # __class__.__init__.__globals__ chain can no longer reach the module globals.
+-  BLOCKED = {'__class__', '__init__', '__bases__', '__base__', '__mro__', '__subclasses__'}
++  # Reject ALL dunder keys, not just a hand-picked few. Any __...__ key can be a
++  # traversal gadget: besides __class__/__init__, a bound method's __globals__
++  # reaches the module globals (secret_key, the gate flag, ...). Benign air-quality
++  # data never contains dunder keys, so this blocks the attack without breaking it.
+   for k, v in src.items():
+-      if k in BLOCKED:
++      if isinstance(k, str) and k.startswith('__') and k.endswith('__'):
+           continue
+       if hasattr(dst, '__getitem__'):
+           if dst.get(k) and type(v) == dict:
